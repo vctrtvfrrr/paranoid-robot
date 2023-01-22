@@ -7,7 +7,9 @@
     "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts",
+    "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "repository": {
     "type": "git",
@@ -22,7 +24,13 @@
   "homepage": "https://github.com/vctrtvfrrr/paranoid-robot#readme",
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.20",
+    "prettier": "^2.8.3",
     "rimraf": "^4.1.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
