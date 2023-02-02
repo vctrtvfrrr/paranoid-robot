@@ -1,6 +1,6 @@
 import { ofetch } from 'ofetch';
 import * as dotenv from 'dotenv';
-import { ISubmission } from './types';
+import { IPost, ISubmission } from './types';
 dotenv.config();
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -49,8 +49,61 @@ async function redditAuth(): Promise<string> {
     }
   });
 
+  const posts: Array<IPost> = [];
+
   submissions.children.forEach((post: ISubmission) => {
-    console.log('url:', post.data.url);
-    console.log('score:', post.data.score);
+    const { data } = post;
+
+    if (data?.is_gallery || data?.post_hint !== 'image') {
+      console.log('Tipo de post não suportado');
+      return;
+    }
+
+    if (data.url === undefined) {
+      console.log('Post sem URL');
+      return;
+    }
+
+    let type;
+    switch (getUrlExtension(data.url)) {
+      case 'jpg':
+      case 'jpeg':
+        type = 'image/jpeg';
+        break;
+
+      case 'png':
+        type = 'image/png';
+        break;
+
+      case 'gif':
+        type = 'image/gif';
+        break;
+
+      default:
+        console.log('Tipo de mídia não suportada');
+        return;
+    }
+
+    posts.push({
+      type,
+      media: data.url,
+      author: `https://reddit.com/u/${data.author}`,
+      source: `https://reddit.com${data.permalink}`
+    });
   });
+
+  console.log(posts);
 })();
+
+function getUrlExtension(url: string): string {
+  const urlParts: Array<string> = url.split(/[#?]/);
+  if (urlParts.length === 0) return '';
+
+  const queryParts: Array<string> = urlParts[0].split('.');
+  if (urlParts.length === 0) return '';
+
+  const extension = queryParts.pop();
+  if (extension === undefined) return '';
+
+  return extension.trim();
+}
